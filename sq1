@@ -1,0 +1,248 @@
+//----------DOCUMENTATION(for solver)-----------------
+//! That program solves square equations
+//! (like there: ax^2+bx+c=0)
+#include <stdio.h>
+#include <malloc.h>
+#include <math.h>
+#include <assert.h>
+#include <stdlib.h>
+//----------------------------------------------
+//! @param EPS  Constant that defines error (for CompZero())
+//! @param INF_SLV_CONST    Constant that means infinity numbers of roots
+#define EPS 1e-10 //Error for CompZero function
+#define EPS2 1e-10 //Error for CompZero in UnitTest
+#define INF_SLV_CONST -1 //Returnable value in case infinity roots
+//----------------------------------------------
+//! @brief (bool)CompZero(double)
+//! @return True if an argument in [-EPS; EPS]
+bool CompZero(double x);
+//! @brief (void)SmartScanfDouble(double*)  Scnans input numbers
+static inline void SmartScanfDouble(double *x);
+//----------------------------------------------
+//! @param [in] struct Coefficients {double a, b, c}    where a, b, c - coefficients in sqeq
+//! @param [out] struct Roots {double x1, x2; int NumOfRoots}   where x1, x2 are roots of eq., NumOfRoots is number of real roots
+struct Roots
+{
+	double x1 = 0, x2 = 0;
+	int NumOfRoots = 0;
+};
+
+struct Coefficients
+{
+	double a = 0, b = 0, c = 0;
+};
+
+//--------------------UNITTEST--------------------------
+//! @brief (bool)Check(struct Coefficients, double) Fills in (double) root to ax^2+bx+c and compare that with zero
+//! @param [in] struct Coefficients coeff   Coefficients of square equation (double a, b, c)
+//! @param [in] double x    Possible root that this function checks
+//! @return True if x found 
+
+bool Check(struct Coefficients coeff, double x);
+
+//! @brief (void)UnitTest(struct Roots (*function) (struct Coefficints)) Tests function()
+void UnitTest(struct Roots (*f)(struct Coefficients coeff)); // Possible call: UnitTest(SolveSqr());
+
+//---------------------SOLVER---------------------------
+//SolveLinear function solves SqEq if the 1st coefficient is equal to 0
+//! @brief (struct Roots)SolveLinear(struct Coefficients)
+//! @param [in] struct Coefficients coeff   Coefficients of square equation (double a, b, c)
+//! @return struct Roots rts    Roots of square equation in case a=0
+struct Roots SolveLinear(struct Coefficients coeff);
+//! @brief (struct Roots)SolveSqr(struct Coefficients)  Returns struct Roots. This function uses SolveLinear()
+//! @param [in] struct Coefficients coeff   Coefficients of square equation (double a, b, c)
+//! @return struct Roots rts    Roots of square equation in all cases
+struct Roots SolveSqr(struct Coefficients coeff);
+//! @brief (void)PrintRoots(struct Roots)   Prints roots (with explain)
+//! @param [in] struct Coefficients coeff   Coefficients of square equation (double a, b, c)
+void PrintRoots(struct Roots rts);
+//----------------------------------------------
+
+int main(void)
+{
+	struct Coefficients coeff = { 0, 0, 0 };
+	
+	printf("This is the square equation solver\n");
+	printf("Warning! Numbers less than %g are equal to zero in this program\n", EPS);
+	printf("The normal view of square equation is:\n");
+	printf("ax^2+bx+c=0\n");
+	
+	printf("Please, enter a:");
+	SmartScanfDouble(&coeff.a);
+	printf("Please, enter b:");
+	SmartScanfDouble(&coeff.b);
+	printf("Please, enter c:");
+	SmartScanfDouble(&coeff.c);
+
+	PrintRoots(SolveSqr(coeff));
+	return 0;
+}
+
+//------------------------------------------------
+bool CompZero(double x)
+{
+	if (fabs(x) < EPS)
+		return true;
+	return false;
+}
+static inline void SmartScanfDouble(double* x)
+{
+	while (scanf("%lg", x) == 0)
+	{
+		printf("You entered wrong symbols, try again plz\n");
+		while (getchar() != '\n');
+	}
+}
+bool Check(struct Coefficients coeff, double x)
+{
+	if (fabs(coeff.a * x * x + coeff.b * x + coeff.c)<EPS2)
+		return true;
+	return false;
+}
+void UnitTest(struct Roots (*f) (struct Coefficients coeff))
+{
+	struct Coefficients coeff = { 0, 0, 0 };
+	struct Roots rts = { 0, 0, 0 };
+	double a = 0, b = 0, c = 0;
+	//test1 (two roots)
+	for (int i = 0; i < 100; i++)
+	{
+		a = rand() + 1;
+		b = rand() + 1;
+		c = rand() + 1;
+		coeff.a = a / b;
+		coeff.b = b / c;
+		coeff.c = -a / c;
+		if (CompZero(coeff.b * coeff.b - 4 * coeff.a * coeff.c))
+		{
+			i--;
+			continue;
+		}
+		rts = f(coeff);
+		if (!(Check(coeff, rts.x1) && Check(coeff, rts.x2)
+			&& rts.NumOfRoots == 2 && !CompZero(fabs(rts.x1-rts.x2))))
+			printf("Error! In test1 with a=%lg, b=%lg, c=%lg\n",
+				coeff.a, coeff.b, coeff.c);
+	}
+	//test2 (D=0)
+	for (int i = 0; i < 100; i++)
+	{
+		a = rand() + 1;
+		b = rand() + 1;
+		c = rand() + 1;
+		coeff.a = a / b;
+		coeff.b = b / c;
+		coeff.c = coeff.b * coeff.b / (4 * coeff.a);
+		rts = f(coeff);
+		if(!(Check(coeff, rts.x1) && Check(coeff, rts.x2) && rts.NumOfRoots == 1))
+			printf("Error! In test2 with a=%lg, b=%lg, c=%lg\n",
+				coeff.a, coeff.b, coeff.c);
+	}
+	//test3 (a=0)
+	coeff.a = 0;
+	for (int i = 0; i < 100; i++)
+	{
+		a = rand() + 1;
+		b = rand() + 1;
+		c = rand() + 1;
+		coeff.b = b / c;
+		coeff.c = a / c;
+		rts = f(coeff);
+		if (!(Check(coeff, rts.x1) && Check(coeff, rts.x2) && rts.NumOfRoots == 1))
+			printf("Error! In test3 with a=%lg, b=%lg, c=%lg\n",
+				coeff.a, coeff.b, coeff.c);
+	}
+	//test4 (a=0, b=0, c!=0)
+	coeff.a = 0;
+	coeff.b = 0;
+	coeff.c = rand() + 1;
+	rts = f(coeff);
+	if(rts.NumOfRoots!=0)
+		printf("Error! In test4 with a=%lg, b=%lg, c=%lg\n",
+			coeff.a, coeff.b, coeff.c);
+	//test5 (a=b=c=0)
+	coeff.a = 0;
+	coeff.b = 0;
+	coeff.c = 0;
+	rts = f(coeff);
+	if(rts.NumOfRoots!=INF_SLV_CONST)
+		printf("Error! In test5 with a=%lg, b=%lg, c=%lg\n",
+			coeff.a, coeff.b, coeff.c);
+	//test6 (D<0)
+	for (int i = 0; i < 100; i++)
+	{
+		a = rand() + 1;
+		b = rand() + 1;
+		c = rand() + 1;
+		coeff.a = a / b;
+		coeff.b = b / c;
+		coeff.c = coeff.b * coeff.b / (4 * coeff.a) + rand();
+		rts = f(coeff);
+		if(rts.NumOfRoots!=0)
+			printf("Error! In test6 with a=%lg, b=%lg, c=%lg\n",
+				coeff.a, coeff.b, coeff.c);
+	}
+	//-------------------------------------------
+	printf("If you have no Errors, your function works correctly\n");
+}
+struct Roots SolveLinear(struct Coefficients coeff)
+{
+	struct Roots rts;
+	if (CompZero(coeff.a) && CompZero(coeff.b) && CompZero(coeff.c))
+	{
+		rts.NumOfRoots = INF_SLV_CONST;
+		return rts;
+	}
+	if (CompZero(coeff.b))
+	{
+		rts.NumOfRoots = 0;
+		return rts;
+	}
+	rts.NumOfRoots = 1;
+	rts.x1 = rts.x2 = -coeff.c / coeff.b;
+	return rts;
+}
+struct Roots SolveSqr(struct Coefficients coeff)
+{
+	if (CompZero(coeff.a))
+		return SolveLinear(coeff);
+	struct Roots rts;
+	double D = coeff.b * coeff.b - 4 * coeff.a * coeff.c;
+	if (D > EPS)
+	{
+		rts.x1 = (-coeff.b + sqrt(D)) / (2 * coeff.a);
+		rts.x2 = (-coeff.b - sqrt(D)) / (2 * coeff.a);
+		rts.NumOfRoots = 2;
+		return rts;
+	}
+	else if (D < -EPS)
+	{
+		rts.NumOfRoots = 0;
+		return rts;
+	}
+	else
+	{
+		rts.x1 = rts.x2 = -coeff.b / (2 * coeff.a);
+		rts.NumOfRoots = 1;
+		return rts;
+	}
+}
+void PrintRoots(struct Roots rts)
+{
+	assert(rts.NumOfRoots >= INF_SLV_CONST && rts.NumOfRoots <= 3);
+	switch (rts.NumOfRoots)
+	{
+	case INF_SLV_CONST:
+		printf("Has infinity solutions\n");
+		break;
+	case 0:
+		printf("Doesn't have any solutions\n");
+		break;
+	case 1:
+		printf("One solution, x=%g\n", rts.x1);
+		break;
+	case 2:
+		printf("Two different solutions, x1=%g, x2=%g\n", rts.x1, rts.x2);
+		break;
+	}
+}
