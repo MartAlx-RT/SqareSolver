@@ -5,7 +5,7 @@
 
 const double EPS = 1e-10; // Error for CompZero function
 const double EPS2 = 1e-10; // Error for CompZero in UnitTest
-
+const int BUFF = 10;
 
 enum Status
 {

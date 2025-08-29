@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "Input.h"
+#include "SquareSolver.h"
 
 //enum Status NumToStatus(int Num);
 
@@ -15,7 +16,8 @@ void PrintErrorMsg(int TestNumb, struct Coefficients coeff);
 
 void UnitTest(struct Roots (*FuncUnderTest)(struct Coefficients coeff), struct RefSolutions *sol, int NumOfTests);
 
-bool CheckRoot(struct Coefficients coeff, double PossibleRoot);
+bool CheckRoot(struct RefSolutions sol, struct Roots ProbRoots);
+
 
 void RandGeneratePositive(double *a, double *b, double *c);
 

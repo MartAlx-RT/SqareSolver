@@ -19,7 +19,7 @@ SquareSolver.o: SquareSolver.cpp
 SquareSolverTest.o: SquareSolverTest.cpp
 	g++ -c SquareSolverTest.cpp
 
-build:
+link:
 	g++ main.o SquareSolver.o Input.o Output.o SquareSolverTest.o
 
 buildh:

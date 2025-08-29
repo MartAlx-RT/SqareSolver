@@ -5,12 +5,13 @@
 #include <stdio.h>
 #include <assert.h>
 #include <malloc.h>
+#include <string.h>
+
+void EnterDoubleWithCheck(double *x);
 
 int EnterTest(struct RefSolutions **sol, const char *FileName);
 
-static inline void ScanfDoubleWithCheck(double *x);
-
-void EnterCoefficients(struct Coefficients *coeff); 
+void EnterCoefficients(struct Coefficients *coeff);
 
 enum Status NumToStatus(int Num);
 

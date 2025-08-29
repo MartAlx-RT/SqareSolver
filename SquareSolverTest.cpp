@@ -51,13 +51,6 @@ void UnitTest(struct Roots (*FuncUnderTest) (struct Coefficients coeff), struct 
 }
 
 
-bool CheckRoot(struct Coefficients coeff, double PossibleRoot)
-{
-    if (fabs(coeff.a * PossibleRoot * PossibleRoot + coeff.b * PossibleRoot + coeff.c)<EPS2)
-        return true;
-    return false;
-}
-
 void RandGeneratePositive(double* a, double* b, double* c)
 {
     double x, y, z;
@@ -100,7 +93,7 @@ void Test1(struct Roots (*FuncUnderTest) (struct Coefficients coeff)) //D>0, two
         
         roots = FuncUnderTest(coeff);
         
-        if (!(CheckRoot(coeff, roots.Root1) && CheckRoot(coeff, roots.Root2)
+        if (!(SubstituteRoot(coeff, roots.Root1) && SubstituteRoot(coeff, roots.Root2)
             && roots.NumOfRoots == TWO_SOL && !CompZero(fabs(roots.Root1-roots.Root2))))
             PrintErrorMsg(1, coeff);
     }
@@ -125,7 +118,7 @@ void Test2(struct Roots (*FuncUnderTest) (struct Coefficients coeff)) //D=0
         
         roots = FuncUnderTest(coeff);
         
-        if(!(CheckRoot(coeff, roots.Root1) && CheckRoot(coeff, roots.Root2) && roots.NumOfRoots == ONE_SOL))
+        if(!(SubstituteRoot(coeff, roots.Root1) && SubstituteRoot(coeff, roots.Root2) && roots.NumOfRoots == ONE_SOL))
             PrintErrorMsg(2, coeff);
     }
 }
@@ -149,7 +142,7 @@ void Test3(struct Roots (*FuncUnderTest) (struct Coefficients coeff)) //a=0
         
         roots = FuncUnderTest(coeff);
         
-        if (!(CheckRoot(coeff, roots.Root1) && CheckRoot(coeff, roots.Root2) && roots.NumOfRoots == ONE_SOL))
+        if (!(SubstituteRoot(coeff, roots.Root1) && SubstituteRoot(coeff, roots.Root2) && roots.NumOfRoots == ONE_SOL))
             PrintErrorMsg(3, coeff);
     }
 }

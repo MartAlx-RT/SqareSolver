@@ -1,5 +1,6 @@
 #include "Input.h"
 
+
 //#include "SquareSolverTest.h"
 
 
@@ -63,15 +64,123 @@ int EnterTest(struct RefSolutions** sol, const char* FileName)
 }
 
 
-static inline void ScanfDoubleWithCheck(double* x)
+void StrClear(char* str)
 {
-    assert(x != NULL);
-    char c = 0;
-    while(scanf("%lg", x) == 0 || getchar() != '\n')
+    assert(str != NULL);
+
+    for (int i = 0; i < BUFF;i++)
+        str[i] = 0;
+}
+
+int FindDot(char* str, int StrLen)
+{
+    assert(str != NULL);
+    assert(StrLen >= 1);
+
+    StrLen--;
+
+    while(str[StrLen]!='.' && StrLen--);
+
+    if(StrLen>=0)
+        return StrLen;
+
+    return -1;
+}
+
+double StrToDouble(char* str1, int StrLen)
+{
+    int MinusFlag = 1;
+    char *str = NULL;
+
+    assert(str1 != NULL);
+    assert(StrLen >= 1);
+
+    if(str1[0]=='-')
     {
-        printf("You entered wrong symbols or extra space, try again\n");
+        str = str1 + 1;
+        StrLen--;
+        MinusFlag = -1;
+    }
+
+    else
+        str = str1;
+
+    double Num = 0;
+
+    int DotIndx = FindDot(str, StrLen);
+
+    int powr = 0;
+
+    assert(DotIndx != 0 && "Wrong number format!!!!!!!111");
+    assert(DotIndx != StrLen - 1 && "Wrong number format!!!!!!!111");
+    
+    if(DotIndx!=-1)
+    {
+        powr = DotIndx + 1 - StrLen;
+
+        for (int i = StrLen-1; i > DotIndx; i--, powr++)
+            Num += (double)(str[i] - '0') * pow(10, powr);
+    
+    }
+
+    assert(powr == 0);
+    
+    if(DotIndx==-1)
+        DotIndx = StrLen;
+    //powr--;
+    for (int i = DotIndx - 1; i >= 0; i--, powr++)
+        Num += (double)(str[i] - '0') * pow(10, powr);
+
+    return MinusFlag * Num;
+}
+
+bool EnterStrOfNum(char* str)
+{
+
+    StrClear(str);
+
+    int i = 0;
+    bool DotFlag = true;
+
+    char c = getchar();
+    
+    if(c=='-')
+    {
+        str[i++] = '-';
+        c = getchar();
+    }
+
+    while (i < BUFF && ('0'<=c && c<='9' || c=='.' && DotFlag))
+    {
+        str[i++] = c;
+        
+        if(c=='.')
+            DotFlag = false;
+
+        c = getchar();
+    }
+
+    assert(i < BUFF && "Too big number!");
+
+    if(c=='\n')
+        return true;
+
+    StrClear(str);
+    
+    return false;
+}
+
+void EnterDoubleWithCheck(double* x)
+{
+    char str[BUFF] = "";
+    
+    while(EnterStrOfNum(str)!=true)
+    {
+        printf("You're silly, I'm too, so try again plz\n");
         while(getchar()!='\n');
     }
+
+    *x = StrToDouble(str, strlen(str));
 }
 
 
@@ -86,12 +195,11 @@ void EnterCoefficients(struct Coefficients* coeff)
 
 
     printf("Please, enter a:");
-    ScanfDoubleWithCheck(&(coeff->a)); //TODO space str
+    EnterDoubleWithCheck(&(coeff->a));
 
     printf("Please, enter b:");
-    ScanfDoubleWithCheck(&(coeff->b));
+    EnterDoubleWithCheck(&(coeff->b));
 
     printf("Please, enter c:");
-    ScanfDoubleWithCheck(&(coeff->c));
+    EnterDoubleWithCheck(&(coeff->c));
 }
-

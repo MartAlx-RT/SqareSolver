@@ -13,6 +13,8 @@ bool CompZero(double x);
 
 static inline void ScanfDoubleWithCheck(double *x);
 
+bool SubstituteRoot(struct Coefficients coeff, double PossibleRoot);
+
 
 //void EnterCoefficients(struct Coefficients *coeff);
 
