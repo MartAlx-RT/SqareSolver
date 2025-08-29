@@ -4,8 +4,9 @@
 #include "CommonVar.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include "Input.h"
 
-enum Status NumToStatus(int Num);
+//enum Status NumToStatus(int Num);
 
 //int EnterTest(struct RefSolutions **sol, const char *FileName);
 void PrintErrorMsg(struct RefSolutions sol, struct Roots ProbRoots);

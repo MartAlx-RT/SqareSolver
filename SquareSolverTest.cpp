@@ -1,32 +1,5 @@
 #include "SquareSolverTest.h"
 
-enum Status NumToStatus(int Num)
-{
-    switch(Num)
-    {
-        
-        case -1:
-        return INF_SOL;
-        break;
-    
-        case 0:
-        return ZERO_SOL;
-        break;
-    
-        case 1:
-        return ONE_SOL;
-        break;
-    
-        case 2:
-        return TWO_SOL;
-        break;
-    
-        default:
-        assert("Wrong Test File!!!!!!!!11");
-        }
-    
-    return INF_SOL;
-}
 
 bool CheckRoot(struct RefSolutions sol, struct Roots ProbRoots)
 {
@@ -36,9 +9,8 @@ bool CheckRoot(struct RefSolutions sol, struct Roots ProbRoots)
     || CompZero(sol.RefRoots.Root1 - ProbRoots.Root2) && CompZero(sol.RefRoots.Root2 - ProbRoots.Root1))
     && ProbRoots.NumOfRoots == sol.RefRoots.NumOfRoots);
     }
-    return ((CompZero(sol.RefRoots.Root1 - ProbRoots.Root1) && CompZero(sol.RefRoots.Root2 - ProbRoots.Root2)
-    || CompZero(sol.RefRoots.Root1 - ProbRoots.Root2) && CompZero(sol.RefRoots.Root2 - ProbRoots.Root1))
-    && ProbRoots.NumOfRoots!=ProbRoots.NumOfRoots);
+    return (sol.RefRoots.Root1 != sol.RefRoots.Root1 && sol.RefRoots.Root2 != sol.RefRoots.Root2
+    && ProbRoots.NumOfRoots==ProbRoots.NumOfRoots);
 }
 
 void PrintErrorMsg(struct RefSolutions sol, struct Roots ProbRoots)

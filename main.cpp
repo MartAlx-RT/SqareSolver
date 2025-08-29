@@ -1,25 +1,67 @@
 #include "SquareSolverTest.h"
 #include "SquareSolver.h"
-#include "In.h"
-#include "Out.h"
+#include "Input.h"
+#include "Output.h"
 
-int main(void) //TODO argc argv
+void RunProgram(int argc, char** argv)
 {
-    struct RefSolutions* refsol;
+    assert(argv != NULL);
+    assert(*argv != NULL);
+
+    struct RefSolutions *refsol = NULL;
     
-    //tester
-    int NumSol = EnterTest(&refsol, "SquareSolver\\UnitTest.txt");
-
-    UnitTest(SolveSqr, refsol, NumSol);
-    StressTest(SolveSqr);
-    printf("\n\n%d\n\n", NumSol);
-
-    //solver
-    struct Coefficients coeff = {0, 0, ZERO_SOL};
+    int NumOfTests = 0;
     
-    EnterCoefficients(&coeff);
-    PrintRoots(SolveSqr(coeff));
+    struct Coefficients coeff = {NAN, NAN, ZERO_SOL};
+    
+    int FlagIndx = 0;
 
+    if(argc>1)
+    {
+        while(argv[1][FlagIndx]!='-' && argv[1][FlagIndx]!='\n')
+            FlagIndx++;
+
+        if(argv[1][FlagIndx]!='\n')
+            FlagIndx++;
+
+        switch(argv[1][FlagIndx])
+        {
+            case 'h':
+                printf("-s: Start Square equation solver\n-t: Start Testing\n");
+
+                break;
+
+            case 't':
+            case '\n':
+                NumOfTests = EnterTest(&refsol, "UnitTest.txt");
+
+                UnitTest(SolveSqr, refsol, NumOfTests);
+                StressTest(SolveSqr);
+
+                break;
+
+            case 's':
+                EnterCoefficients(&coeff);
+                PrintRoots(SolveSqr(coeff));
+
+                break;
+
+            default:
+                printf("-h: Flag Helps Information\n-s: Start Square equation solver\n-t: Start Testing\n");
+
+        }
+    }
+    else
+    {
+        EnterCoefficients(&coeff);
+        PrintRoots(SolveSqr(coeff));
+    }
+}   
+
+int main(int argc, char** argv)
+{
+    
+    RunProgram(argc, argv);
 
     return 0;
 }

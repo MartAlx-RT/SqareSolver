@@ -32,4 +32,5 @@ struct RefSolutions
     struct Roots RefRoots = {0, 0, ZERO_SOL};
 };
 
+
 #endif  //CAMMINVAR_H
