@@ -1,21 +1,24 @@
-#include "SquareLib.h"
 #ifndef SQUARESOLVERTEST_H
 #define SQUARESOLVERTEST_H
+#include "SquareSolver.h"
+#include "CommonVar.h"
+#include <stdio.h>
+#include <stdlib.h>
 
+enum Status NumToStatus(int Num);
 
-struct RefSolutions
-{
-    struct Coefficients coeff = {NAN, NAN, NAN};
-    struct Roots RefRoots = {0, 0, ZERO_SOL};
-};
+//int EnterTest(struct RefSolutions **sol, const char *FileName);
+void PrintErrorMsg(struct RefSolutions sol, struct Roots ProbRoots);
 
-const size_t RefSolSize = sizeof(struct RefSolutions);
-
-int EnterTest(struct RefSolutions *sol, const char *FileName, const int MaxSize);
+void PrintErrorMsg(int TestNumb, struct Coefficients coeff);
 
 void UnitTest(struct Roots (*FuncUnderTest)(struct Coefficients coeff), struct RefSolutions *sol, int NumOfTests);
 
 bool CheckRoot(struct Coefficients coeff, double PossibleRoot);
+
+void RandGeneratePositive(double *a, double *b, double *c);
+
+
 
 void Test1(struct Roots (*FuncUnderTest)(struct Coefficients coeff));
 void Test2(struct Roots (*FuncUnderTest)(struct Coefficients coeff));

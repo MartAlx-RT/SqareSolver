@@ -1,24 +1,25 @@
 #include "SquareSolverTest.h"
-#include "SquareLib.h"
-#include <malloc.h>
-#include <stdio.h>
-#include <assert.h>
-#include <stdlib.h>
+#include "SquareSolver.h"
+#include "In.h"
+#include "Out.h"
 
-int main(void)
+int main(void) //TODO argc argv
 {
-    struct RefSolutions refsol[200];
+    struct RefSolutions* refsol;
+    
     //tester
-    int NumSol = EnterTest(refsol, ".\\.vscode\\UnitTest.txt", 200);
+    int NumSol = EnterTest(&refsol, "SquareSolver\\UnitTest.txt");
 
     UnitTest(SolveSqr, refsol, NumSol);
     StressTest(SolveSqr);
-    
+    printf("\n\n%d\n\n", NumSol);
+
     //solver
     struct Coefficients coeff = {0, 0, ZERO_SOL};
     
     EnterCoefficients(&coeff);
     PrintRoots(SolveSqr(coeff));
+
 
     return 0;
 }
